@@ -3,34 +3,32 @@ name: juno-subql-starter
 version: 0.0.1
 runner:
   node:
-    name: '@subql/node-cosmos'
-    version: '*'
+    name: "@subql/node-cosmos"
+    version: "*"
   query:
-    name: '@subql/query'
-    version: '*'
+    name: "@subql/query"
+    version: "*"
 description: >-
   This project can be use as a starting point for developing your Cosmos (Juno)
   based SubQuery project
-repository: 'https://github.com/subquery/juno-subql-starter'
+repository: "https://github.com/subquery/juno-subql-starter"
 schema:
   file: ./schema.graphql
 network:
   chainId: juno-1
-  endpoint: 'https://juno.api.onfinality.io/public'
-  dictionary: 'https://api.subquery.network/sq/subquery/cosmos-juno-dictionary'
+  endpoint: "https://juno.api.onfinality.io/public"
+  dictionary: "https://api.subquery.network/sq/subquery/cosmos-juno-dictionary"
 dataSources:
   - kind: cosmos/Runtime
     startBlock: 4415041
     mapping:
       file: ./dist/index.js
       handlers:
-        - handler: handleEvent
-          kind: cosmos/EventHandler
-          filter:
-            type: execute
-            messageFilter:
-              type: /cosmwasm.wasm.v1.MsgExecuteContract
-        - handler: handleMessage
+        - handler: handleTerraDeveloperFund
           kind: cosmos/MessageHandler
           filter:
-            type: /cosmwasm.wasm.v1.MsgExecuteContract
+            type: "/cosmwasm.wasm.v1.MsgExecuteContract"
+            # Filter to only messages with the vote function call
+            contractCall: "vote" # The name of the contract function that was called
+            values: # This is the specific smart contract that we are subscribing to
+              contract: "juno1lgnstas4ruflg0eta394y8epq67s4rzhg5anssz3rc5zwvjmmvcql6qps2"

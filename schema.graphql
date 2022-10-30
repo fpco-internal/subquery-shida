@@ -1,29 +1,7 @@
-# To improve query performance, we strongly suggest adding indexes to any field that you plan to filter or sort by
-# Add the `@index` or `@index(unique: true)` annotation after any non-key field
-# https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
-
-# type Block @entity {
-#   id: ID! # The block hash
-#   height: BigInt!
-# }
-
-# type Transaction @entity {
-#   id: ID!
-#   blockHeight: BigInt!
-#   timestamp: String!
-# }
-
-type ExecuteEvent @entity {
-  id: ID!
+type Vote @entity {
+  id: ID! # id field is always required and must look like this
   blockHeight: BigInt!
-  txHash: String!
-  contractAddress: String!
-}
-
-type Message @entity {
-  id: ID!
-  blockHeight: BigInt!
-  txHash: String!
-  sender: String!
-  contract: String!
+  voter: String! # The address that voted
+  proposalID: BigInt! # The proposal ID
+  vote: Boolean! # If they voted to support or reject the proposal
 }

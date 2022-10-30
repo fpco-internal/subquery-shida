@@ -1,45 +1,26 @@
-import { ExecuteEvent, Message } from "../types";
-import {
-  CosmosEvent,
-  CosmosBlock,
-  CosmosMessage,
-  CosmosTransaction,
-} from "@subql/types-cosmos";
+import { Vote } from "../types";
+import { CosmosMessage } from "@subql/types-cosmos";
 
-/*
-export async function handleBlock(block: CosmosBlock): Promise<void> {
-  // If you want to index each block in Cosmos (Juno), you could do that here
-}
+type Msg = {
+  vote: {
+    proposal_id: bigint;
+    vote: string;
+  };
+};
 
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // If you want to index each transaction in Cosmos (Juno), you could do that here
-  const transactionRecord = Transaction.create({
-    id: tx.hash,
-    blockHeight: BigInt(tx.block.block.header.height),
-    timestamp: tx.block.block.header.time,
-  });
-  await transactionRecord.save();
-}
-*/
+export async function handleTerraDeveloperFund(
+  message: CosmosMessage<{ sender: string; msg: Msg }>
+): Promise<void> {
+  // logger.info(JSON.stringify(message));
+  // Example vote https://www.mintscan.io/juno/txs/EAA2CC113B3EC79AE5C280C04BE851B82414B108273F0D6464A379D7917600A4
 
-export async function handleMessage(msg: CosmosMessage): Promise<void> {
-  const messageRecord = Message.create({
-    id: `${msg.tx.hash}-${msg.idx}`,
-    blockHeight: BigInt(msg.block.block.header.height),
-    txHash: msg.tx.hash,
-    sender: msg.msg.decodedMsg.sender,
-    contract: msg.msg.decodedMsg.contract,
-  });
-  await messageRecord.save();
-}
-
-export async function handleEvent(event: CosmosEvent): Promise<void> {
-  const eventRecord = ExecuteEvent.create({
-    id: `${event.tx.hash}-${event.msg.idx}-${event.idx}`,
-    blockHeight: BigInt(event.block.block.header.height),
-    txHash: event.tx.hash,
-    contractAddress: event.event.attributes.find(attr => attr.key === '_contract_address').value
+  const voteRecord = Vote.create({
+    id: `${message.tx.hash}-${message.idx}`,
+    blockHeight: BigInt(message.block.block.header.height),
+    voter: message.msg.decodedMsg.sender,
+    proposalID: message.msg.decodedMsg.msg.vote.proposal_id,
+    vote: message.msg.decodedMsg.msg.vote.vote === "yes",
   });
 
-  await eventRecord.save();
+  await voteRecord.save();
 }
