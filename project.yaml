@@ -24,11 +24,8 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
-        - handler: handleTerraDeveloperFund
-          kind: cosmos/MessageHandler
+        - handler: handleBlock
+          kind: substrate/EventHandler
           filter:
-            type: "/cosmwasm.wasm.v1.MsgExecuteContract"
-            # Filter to only messages with the vote function call
-            contractCall: "vote" # The name of the contract function that was called
-            values: # This is the specific smart contract that we are subscribing to
-              contract: "juno1lgnstas4ruflg0eta394y8epq67s4rzhg5anssz3rc5zwvjmmvcql6qps2"
+            module: session
+            method: NewSession
